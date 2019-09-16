@@ -1,31 +1,21 @@
 package ir.navaco.core.statemachine.api;
 
 import ir.navaco.core.statemachine.entity.StateMachineFactoryRequest;
-import ir.navaco.core.statemachine.entity.statemachine.Events;
-import ir.navaco.core.statemachine.entity.statemachine.States;
-import ir.navaco.core.statemachine.exception.StateMachineFactoryInternalException;
 import ir.navaco.core.statemachine.exception.StateMachineFactoryNotFoundException;
+import ir.navaco.core.statemachine.service.StateMachineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.config.StateMachineFactory;
-import org.springframework.statemachine.persist.StateMachinePersister;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/state-machine")
 public class StateMachineController {
 
-    @Autowired
-    private StateMachineFactory<States, Events> stateMachineFactory;
+    private StateMachineService stateMachineService;
 
     @Autowired
-    private StateMachinePersister<States, Events, String> persister;
-
-    @Autowired
-    public StateMachineController() {
+    public StateMachineController(StateMachineService stateMachineService) {
+        this.stateMachineService = stateMachineService;
     }
 
     @GetMapping("/health")
@@ -41,21 +31,7 @@ public class StateMachineController {
     //TODO sm_id createStateMachine(factoryType)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public String createStateMachine(@RequestBody StateMachineFactoryRequest stateMachineFactoryRequest) throws StateMachineFactoryNotFoundException {
-        String stateMachineUUID = UUID.randomUUID().toString();
-        switch (stateMachineFactoryRequest.getType()) {
-            case "type1":
-                StateMachine<States, Events> stateMachine = stateMachineFactory.getStateMachine(stateMachineUUID);
-                try {
-                    persister.persist(stateMachine, stateMachine.getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new StateMachineFactoryInternalException("StateMachineController", "stateMachine.getId()", stateMachine.getId());
-                }
-                break;
-            default:
-                throw new StateMachineFactoryNotFoundException("StateMachineFactoryRequest", "type", stateMachineFactoryRequest.getType());
-        }
-        return stateMachineUUID;
+        return stateMachineService.createStateMachine(stateMachineFactoryRequest);
     }
 
 
