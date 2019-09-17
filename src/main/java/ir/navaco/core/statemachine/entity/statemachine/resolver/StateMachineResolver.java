@@ -4,12 +4,6 @@ import org.springframework.statemachine.StateMachine;
 
 import java.util.List;
 
-/**
- * Created by Korovin Anatolii on 02.06.2018.
- *
- * @author Korovin Anatolii
- * @version 1.0
- */
 public interface StateMachineResolver<S, E> {
 
     /**
@@ -17,7 +11,7 @@ public interface StateMachineResolver<S, E> {
      *
      * @param stateMachine state machine
      *
-     * @return Events collection
+     * @return Event collection
      */
     List<E> getAvailableEvents(StateMachine<S, E> stateMachine);
 }

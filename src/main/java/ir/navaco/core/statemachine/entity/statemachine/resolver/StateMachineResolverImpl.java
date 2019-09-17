@@ -11,12 +11,6 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * Created by Korovin Anatolii on 02.06.2018.
- *
- * @author Korovin Anatolii
- * @version 1.0
- */
 @Component
 public class StateMachineResolverImpl<StatesT, EventsT> implements StateMachineResolver<StatesT, EventsT> {
 

@@ -5,12 +5,28 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
+# create state machine
 POST http://localhost:8082/state-machine
 Content-Type: application/json
 
-{ "type" : "type1" }
+{ "stateMachineFactoryType" : "type2" }
 
 ###
-GET http://localhost:8082/state-machine
+# sends a valid event to state machine
+POST http://localhost:8082/state-machine/event
+Content-Type: application/json
 
+{ "stateMachineId" : "xxx", "event" : "START_FEATURE"}
+###
+# sends an invalid event to state machine
+POST http://localhost:8082/state-machine/event
+Content-Type: application/json
+
+{ "stateMachineId" : "xxx", "event" : "NOT_VALID_EVENT"}
+###
+# sends a valid event to state machine
+POST http://localhost:8082/state-machine/event
+Content-Type: application/json
+
+{ "stateMachineId" : "xxx", "event" : "FINISH_FEATURE"}
 ###
