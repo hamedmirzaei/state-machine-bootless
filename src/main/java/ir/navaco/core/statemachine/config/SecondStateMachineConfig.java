@@ -21,10 +21,10 @@ import java.util.Optional;
 
 @Slf4j
 @Configuration
-@EnableStateMachineFactory(name = StateMachineConfig.SMFB)
-public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State, Event> {
+@EnableStateMachineFactory(name = SecondStateMachineConfig.SMFB)
+public class SecondStateMachineConfig extends EnumStateMachineConfigurerAdapter<State, Event> {
 
-    public static final String SMFB = "stateMachineFactory";
+    public static final String SMFB = "secondStateMachineFactory";
 
     @Autowired
     StateMachineRuntimePersister<State, Event, String> jpaRuntimePersist;
@@ -66,7 +66,6 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
         states.withStates()
                 .initial(State.BACKLOG)
                 .state(State.IN_PROGRESS)
-                .state(State.TESTING)
                 .state(State.DONE)
                 .end(State.DONE);
     }
@@ -82,25 +81,8 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<State,
                 // DEVELOPERS:
                 .withExternal()
                 .source(State.IN_PROGRESS)
-                .target(State.TESTING)
-                .event(Event.FINISH_FEATURE)
-                .and()
-                // QA-TEAM:
-                .withExternal()
-                .source(State.TESTING)
                 .target(State.DONE)
-                .event(Event.QA_CHECKED_UC)
-                .and()
-                .withExternal()
-                .source(State.TESTING)
-                .target(State.IN_PROGRESS)
-                .event(Event.QA_REJECTED_UC)
-                .and()
-                // ROCK-STAR:
-                .withExternal()
-                .source(State.BACKLOG)
-                .target(State.TESTING)
-                .event(Event.ROCK_STAR_DOUBLE_TASK);
+                .event(Event.FINISH_FEATURE);
     }
 
 }

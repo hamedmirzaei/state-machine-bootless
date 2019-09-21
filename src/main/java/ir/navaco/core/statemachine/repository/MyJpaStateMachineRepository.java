@@ -1,3 +1,4 @@
+/*
 package ir.navaco.core.statemachine.repository;
 
 import org.springframework.statemachine.data.jpa.JpaRepositoryStateMachine;
@@ -8,3 +9,4 @@ import org.springframework.stereotype.Repository;
 public interface MyJpaStateMachineRepository extends JpaStateMachineRepository {
     JpaRepositoryStateMachine findByMachineId(String machineId);
 }
+*/

@@ -1,7 +1,8 @@
+/*
 package ir.navaco.core.statemachine.entity.statemachine;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import ir.navaco.core.statemachine.exception.EventNotValidException;
+import ir.navaco.core.statemachine.exception.StateMachineException;
 
 public enum Event {
 
@@ -28,15 +29,16 @@ public enum Event {
     }
 
     @JsonCreator
-    public static Event create(String value) throws EventNotValidException {
-        if(value == null) {
-            throw new EventNotValidException("Event", "eventName", value);
+    public static Event create(String value) throws StateMachineException.EventNotValidException {
+        if (value == null) {
+            throw new StateMachineException.EventNotValidException(value);
         }
-        for(Event v : values()) {
-            if(value.equals(v.getEventName())) {
+        for (Event v : values()) {
+            if (value.equals(v.getEventName())) {
                 return v;
             }
         }
-        throw new EventNotValidException("Event", "eventName", value);
+        throw new StateMachineException.EventNotValidException(value);
     }
 }
+*/

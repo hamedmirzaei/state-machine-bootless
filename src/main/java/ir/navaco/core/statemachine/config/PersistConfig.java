@@ -1,3 +1,4 @@
+/*
 package ir.navaco.core.statemachine.config;
 
 import ir.navaco.core.statemachine.entity.statemachine.Event;
@@ -29,3 +30,4 @@ public class PersistConfig {
         return new DefaultStateMachinePersister<>(defaultPersist);
     }
 }
+*/

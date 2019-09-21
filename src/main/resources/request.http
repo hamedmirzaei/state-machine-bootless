@@ -9,24 +9,36 @@
 POST http://localhost:8082/state-machine
 Content-Type: application/json
 
-{ "stateMachineFactoryType" : "type2" }
+{ "type" : "type1" }
 
 ###
 # sends a valid event to state machine
-POST http://localhost:8082/state-machine/event
+POST http://localhost:8082/state-machine/xxx/events/trigger
 Content-Type: application/json
 
-{ "stateMachineId" : "xxx", "event" : "START_FEATURE"}
+{ "event" : "E1"}
 ###
 # sends an invalid event to state machine
-POST http://localhost:8082/state-machine/event
+POST http://localhost:8082/state-machine/xxx/events/trigger
 Content-Type: application/json
 
-{ "stateMachineId" : "xxx", "event" : "NOT_VALID_EVENT"}
+{ "event" : "EN"}
 ###
 # sends a valid event to state machine
-POST http://localhost:8082/state-machine/event
+POST http://localhost:8082/state-machine/xxx/events/trigger
 Content-Type: application/json
 
-{ "stateMachineId" : "xxx", "event" : "FINISH_FEATURE"}
+{ "event" : "E2"}
+###
+# init
+GET http://localhost:8082/state-machine/health
+###
+# get states
+GET http://localhost:8082/state-machine/xxx/states
+###
+# get events
+GET http://localhost:8082/state-machine/xxx/events
+###
+# get current state
+GET http://localhost:8082/state-machine/xxx/states/current
 ###

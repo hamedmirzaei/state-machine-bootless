@@ -1,3 +1,4 @@
+/*
 package ir.navaco.core.statemachine.entity.statemachine.resolver;
 
 import org.springframework.statemachine.StateContext;
@@ -65,3 +66,4 @@ public class StateMachineResolverImpl<StatesT, EventsT> implements StateMachineR
                 null);
     }
 }
+*/

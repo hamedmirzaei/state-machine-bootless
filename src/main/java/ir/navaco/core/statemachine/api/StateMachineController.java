@@ -1,9 +1,7 @@
 package ir.navaco.core.statemachine.api;
 
-import ir.navaco.core.statemachine.exception.EventNotValidException;
-import ir.navaco.core.statemachine.exception.StateMachineFactoryNotFoundException;
-import ir.navaco.core.statemachine.exception.StateMachineNotFoundException;
-import ir.navaco.core.statemachine.exception.StateMachinePersistInternalException;
+import ir.navaco.core.statemachine.exception.StateMachineException;
+import ir.navaco.core.statemachine.exception.StateMachineRequestValidationException;
 import ir.navaco.core.statemachine.service.StateMachineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,63 +26,115 @@ public class StateMachineController {
 
     @GetMapping("/health")
     public String healthCheck() {
+        stateMachineService.initialize();
         return "Server is UP";
     }
 
     /**
      * It will create a state machine instance of type stateMachineFactoryType and
-     * return its id for further usage like sending events
-     *
+     * return its UUID for further usage like sending events
      * @param input type of factory to create state machine from
-     * @return state machine id
-     * @throws StateMachineFactoryNotFoundException where the type is not a valid factory type
+     * @return UUID of state machine
      */
-    //TODO sm_id createStateMachine(factoryType)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createStateMachine(@RequestBody Map<String, String> input) {
-        String stateMachineId = "";
         try {
-            stateMachineId = stateMachineService.createStateMachine(input.get("stateMachineFactoryType"));
-            return ResponseEntity.ok(stateMachineId);
-        } catch (StateMachineFactoryNotFoundException ex) {
+            validate(input, 1, "type");
+            String stateMachineUuid = stateMachineService.createStateMachine(input.get("type"));
+            return ResponseEntity.ok(stateMachineUuid);
+        } catch (StateMachineRequestValidationException.BadSizeMap | StateMachineRequestValidationException.FieldNotExist ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (StateMachineException.FactoryNotFoundException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (StateMachineException.PersistException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
     }
 
     /**
-     * sends an event
-     *
-     * @param input
-     * @return
-     * @throws StateMachinePersistInternalException
-     * @throws StateMachineNotFoundException
-     * @throws EventNotValidException
+     * this returns list of all events of a state machine
+     * @param stateMachineUuid UUID of state machine
+     * @return list of all events
      */
-    //TODO sendEvent(sm_id, event)
-    @PostMapping(value = "/event", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> sendEvent(@RequestBody Map<String, String> input)
-            throws StateMachinePersistInternalException, StateMachineNotFoundException, EventNotValidException {
+    @GetMapping("/{smuuid}/events")
+    public ResponseEntity<List<String>> getEvents(@PathVariable("smuuid") String stateMachineUuid) {
         try {
-            String message = stateMachineService.sendEvent(input.get("stateMachineId"), input.get("event"));
+            return ResponseEntity.ok(stateMachineService.getEvents(stateMachineUuid));
+        } catch (StateMachineException.MachineNotExistException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+    }
+
+    /**
+     * this triggers an event on the state machine
+     * @param stateMachineUuid UUID of state machine
+     * @param input body of POST message which is the event
+     * @return a success or failure message
+     */
+    @PostMapping(value = "/{smuuid}/events/trigger", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> sendEvent(@PathVariable("smuuid") String stateMachineUuid, @RequestBody Map<String, String> input) {
+        try {
+            validate(input, 1,"event");
+            String message = stateMachineService.sendEvent(stateMachineUuid, input.get("event"));
             return ResponseEntity.ok(message);
-        } catch (StateMachinePersistInternalException ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-        } catch (StateMachineNotFoundException ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        } catch (EventNotValidException ex) {
+        } catch (StateMachineRequestValidationException.BadSizeMap | StateMachineRequestValidationException.FieldNotExist | StateMachineException.EventNotValidException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (StateMachineException.PersistException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        } catch (StateMachineException.MachineNotExistException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
     }
 
-    //TODO getCurrentState(sm_id)
-    //TODO getEvents(sm_id)
-    //TODO getStates(sm_id)?
+    /**
+     * this returns list of all states of a state machine
+     * @param stateMachineUuid UUID of state machine
+     * @return list of all states
+     */
+    @GetMapping("/{smuuid}/states")
+    public ResponseEntity<List<String>> getStates(@PathVariable("smuuid") String stateMachineUuid) {
+        try {
+            return ResponseEntity.ok(stateMachineService.getStates(stateMachineUuid));
+        } catch (StateMachineException.MachineNotExistException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+    }
 
+    /**
+     * this returns the current state of a state machine
+     * @param stateMachineUuid UUID of state machine
+     * @return current state
+     */
+    @GetMapping("/{smuuid}/states/current")
+    public ResponseEntity<String> getCurrentState(@PathVariable("smuuid") String stateMachineUuid) {
+        try {
+            return ResponseEntity.ok(stateMachineService.getCurrentState(stateMachineUuid));
+        } catch (StateMachineException.MachineNotExistException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+    }
+
+    private void validate(Map<String, String> input, Integer size, String... keys)
+            throws StateMachineRequestValidationException.BadSizeMap, StateMachineRequestValidationException.FieldNotExist {
+        if (input.size() != size) {
+            throw new StateMachineRequestValidationException.BadSizeMap(size, input.size());
+        }
+        for (String key : keys) {
+            if (!input.containsKey(key)) {
+                throw new StateMachineRequestValidationException.FieldNotExist(key);
+            }
+        }
+    }
 }

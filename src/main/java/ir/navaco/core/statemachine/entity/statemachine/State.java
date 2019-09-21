@@ -1,3 +1,4 @@
+/*
 package ir.navaco.core.statemachine.entity.statemachine;
 
 public enum State {
@@ -18,3 +19,4 @@ public enum State {
     }
 }
 
+*/
