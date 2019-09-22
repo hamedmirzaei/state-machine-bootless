@@ -19,14 +19,10 @@ import java.util.List;
 @Service
 public class StateMachineServiceImpl implements StateMachineService {
 
-    @Autowired
-    StateMachineFactoryRepository stateMachineFactoryRepository;
-    @Autowired
-    StateMachineRepository stateMachineRepository;
-    @Autowired
-    StateRepository stateRepository;
-    @Autowired
-    TransitionRepository transitionRepository;
+    private StateMachineFactoryRepository stateMachineFactoryRepository;
+    private StateMachineRepository stateMachineRepository;
+    private StateRepository stateRepository;
+    private TransitionRepository transitionRepository;
 
     @Transactional
     @Override
@@ -108,6 +104,26 @@ public class StateMachineServiceImpl implements StateMachineService {
             throw new StateMachineException.MachineNotExistException(stateMachineUuid);
         }
         return stateMachine.getCurrentState().getStateName();
+    }
+
+    @Autowired
+    public void setStateMachineFactoryRepository(StateMachineFactoryRepository stateMachineFactoryRepository) {
+        this.stateMachineFactoryRepository = stateMachineFactoryRepository;
+    }
+
+    @Autowired
+    public void setStateMachineRepository(StateMachineRepository stateMachineRepository) {
+        this.stateMachineRepository = stateMachineRepository;
+    }
+
+    @Autowired
+    public void setStateRepository(StateRepository stateRepository) {
+        this.stateRepository = stateRepository;
+    }
+
+    @Autowired
+    public void setTransitionRepository(TransitionRepository transitionRepository) {
+        this.transitionRepository = transitionRepository;
     }
 
     @Override

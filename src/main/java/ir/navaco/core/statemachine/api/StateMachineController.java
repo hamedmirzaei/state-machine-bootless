@@ -24,7 +24,7 @@ public class StateMachineController {
 
     @GetMapping("/health")
     public String healthCheck() {
-        stateMachineService.initialize();
+        //stateMachineService.initialize();
         return "Server is UP";
     }
 
