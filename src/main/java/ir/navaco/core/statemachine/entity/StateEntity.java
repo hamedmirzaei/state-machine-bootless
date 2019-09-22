@@ -1,6 +1,6 @@
 package ir.navaco.core.statemachine.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import ir.navaco.core.statemachine.enums.Schema;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -8,20 +8,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = MyState.STATE_TABLE_NAME, schema = "USRPRF")
-public class MyState implements Serializable {
+@Table(name = StateEntity.STATE_TABLE_NAME, schema = Schema.IF)
+public class StateEntity implements Serializable {
 
-    public static final String STATE_TABLE_NAME = "MY_STATE";
+    public static final String STATE_TABLE_NAME = "STATE";
     public static final String STATE_SEQUENCE_NAME = STATE_TABLE_NAME + "_SEQ";
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stt_sm_generator")
-    @SequenceGenerator(name = "stt_sm_generator", sequenceName = MyState.STATE_SEQUENCE_NAME, schema = "USRPRF", allocationSize = 1, initialValue = 1)
+    @SequenceGenerator(name = "stt_sm_generator", sequenceName = StateEntity.STATE_SEQUENCE_NAME, schema = Schema.IF, allocationSize = 1, initialValue = 1)
     private Long id;
 
     @Column(name = "STATE_NAME", nullable = false)
@@ -35,19 +34,19 @@ public class MyState implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATE_MACHINE_FACTORY", referencedColumnName = "ID")
-    private MyStateMachineFactory stateMachineFactory;
+    private StateMachineFactoryEntity stateMachineFactory;
 
     /*@JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "sourceState")
-    private List<MyTransition> sourceTransitionList;*/
+    private List<TransitionEntity> sourceTransitionList;*/
 
     /*@JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "destinationState")
-    private List<MyTransition> destinationTransitionList;*/
+    private List<TransitionEntity> destinationTransitionList;*/
 
     /*@JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "currentState")
-    private List<MyStateMachine> stateMachines;*/
+    private List<StateMachineEntity> stateMachines;*/
 
     @Column(nullable = false, updatable = false, name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
@@ -59,17 +58,17 @@ public class MyState implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
-    public MyState() {
+    public StateEntity() {
     }
 
-    public MyState(String stateName, Boolean initial, Boolean end, MyStateMachineFactory stateMachineFactory) {
+    public StateEntity(String stateName, Boolean initial, Boolean end, StateMachineFactoryEntity stateMachineFactory) {
         this.stateName = stateName;
         this.initial = initial;
         this.end = end;
         this.stateMachineFactory = stateMachineFactory;
     }
 
-    public MyState(Long id, String stateName, Boolean initial, Boolean end, MyStateMachineFactory stateMachineFactory) {
+    public StateEntity(Long id, String stateName, Boolean initial, Boolean end, StateMachineFactoryEntity stateMachineFactory) {
         this.id = id;
         this.stateName = stateName;
         this.initial = initial;
@@ -109,11 +108,11 @@ public class MyState implements Serializable {
         this.end = end;
     }
 
-    public MyStateMachineFactory getStateMachineFactory() {
+    public StateMachineFactoryEntity getStateMachineFactory() {
         return stateMachineFactory;
     }
 
-    public void setStateMachineFactory(MyStateMachineFactory stateMachineFactory) {
+    public void setStateMachineFactory(StateMachineFactoryEntity stateMachineFactory) {
         this.stateMachineFactory = stateMachineFactory;
     }
 
@@ -135,7 +134,7 @@ public class MyState implements Serializable {
 
     @Override
     public String toString() {
-        return "MyState{" +
+        return "StateEntity{" +
                 "id=" + id +
                 ", stateName='" + stateName + '\'' +
                 ", initial=" + initial +
@@ -149,7 +148,7 @@ public class MyState implements Serializable {
     public boolean equals(Object obj) {
         if(obj == null)
             return false;
-        MyState m = (MyState) obj;
+        StateEntity m = (StateEntity) obj;
         if(this.stateName == null)
             return false;
         if (this.stateName.equals(m.getStateName())) {

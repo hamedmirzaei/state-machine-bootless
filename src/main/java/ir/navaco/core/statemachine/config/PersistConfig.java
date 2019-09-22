@@ -2,7 +2,7 @@
 package ir.navaco.core.statemachine.config;
 
 import ir.navaco.core.statemachine.entity.statemachine.Event;
-import ir.navaco.core.statemachine.entity.statemachine.State;
+import ir.navaco.core.statemachine.entity.statemachine.StateEntity;
 import ir.navaco.core.statemachine.repository.MyJpaStateMachineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +20,13 @@ public class PersistConfig {
     private MyJpaStateMachineRepository myJpaStateMachineRepository;
 
     @Bean
-    public StateMachineRuntimePersister<State, Event, String> jpaRuntimePersist() {
+    public StateMachineRuntimePersister<StateEntity, Event, String> jpaRuntimePersist() {
         return new JpaPersistingStateMachineInterceptor<>(myJpaStateMachineRepository);
     }
 
     @Bean
-    public StateMachinePersister<State, Event, String>
-    persister(StateMachinePersist<State, Event, String> defaultPersist) {
+    public StateMachinePersister<StateEntity, Event, String>
+    persister(StateMachinePersist<StateEntity, Event, String> defaultPersist) {
         return new DefaultStateMachinePersister<>(defaultPersist);
     }
 }

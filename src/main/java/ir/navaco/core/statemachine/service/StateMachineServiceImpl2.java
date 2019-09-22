@@ -2,12 +2,12 @@
 package ir.navaco.core.statemachine.service;
 
 import ir.navaco.core.statemachine.entity.statemachine.Event;
-import ir.navaco.core.statemachine.entity.statemachine.State;
+import ir.navaco.core.statemachine.entity.statemachine.StateEntity;
 import ir.navaco.core.statemachine.exception.StateMachineException;
 import ir.navaco.core.statemachine.repository.MyJpaStateMachineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.config.StateMachineFactory;
+import org.springframework.statemachine.StateMachineEntity;
+import org.springframework.statemachine.config.StateMachineFactoryEntity;
 import org.springframework.statemachine.persist.StateMachinePersister;
 import org.springframework.stereotype.Service;
 
@@ -20,20 +20,20 @@ public class StateMachineServiceImpl2 implements StateMachineService {
     private MyJpaStateMachineRepository myJpaStateMachineRepository;
 
     @Autowired
-    private StateMachineFactory<State, Event> stateMachineFactory;
+    private StateMachineFactoryEntity<StateEntity, Event> stateMachineFactory;
 
     @Autowired
-    private StateMachineFactory<State, Event> secondStateMachineFactory;
+    private StateMachineFactoryEntity<StateEntity, Event> secondStateMachineFactory;
 
     @Autowired
-    private StateMachinePersister<State, Event, String> persister;
+    private StateMachinePersister<StateEntity, Event, String> persister;
 
     @Override
     public String createStateMachine(String stateMachineFactoryType)
             throws StateMachineException.FactoryNotFoundException, StateMachineException.PersistException {
         String stateMachineId = "xxx"; //TODO replace with UUID.randomUUID().toString();
-        StateMachineFactory<State, Event> factory = getStateMachineFactory(stateMachineFactoryType);
-        StateMachine<State, Event> stateMachine = factory.getStateMachine(stateMachineId);
+        StateMachineFactoryEntity<StateEntity, Event> factory = getStateMachineFactory(stateMachineFactoryType);
+        StateMachineEntity<StateEntity, Event> stateMachine = factory.getStateMachine(stateMachineId);
         try {
             persister.persist(stateMachine, stateMachine.getId());
         } catch (Exception e) {
@@ -43,7 +43,7 @@ public class StateMachineServiceImpl2 implements StateMachineService {
         return stateMachineId;
     }
 
-    private StateMachineFactory<State, Event> getStateMachineFactory(String stateMachineFactoryType)
+    private StateMachineFactoryEntity<StateEntity, Event> getStateMachineFactory(String stateMachineFactoryType)
             throws StateMachineException.FactoryNotFoundException {
         switch (stateMachineFactoryType) {
             case "type1":
@@ -61,7 +61,7 @@ public class StateMachineServiceImpl2 implements StateMachineService {
         if (myJpaStateMachineRepository.findByMachineId(stateMachineId) == null) {
             throw new StateMachineException.MachineNotExistException(stateMachineId);
         }
-        StateMachine<State, Event> stateMachine = stateMachineFactory.getStateMachine(stateMachineId + "_test");
+        StateMachineEntity<StateEntity, Event> stateMachine = stateMachineFactory.getStateMachine(stateMachineId + "_test");
         try {
             persister.restore(stateMachine, stateMachineId);
         } catch (Exception e) {

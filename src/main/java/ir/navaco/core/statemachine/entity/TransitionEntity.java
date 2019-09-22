@@ -1,5 +1,6 @@
 package ir.navaco.core.statemachine.entity;
 
+import ir.navaco.core.statemachine.enums.Schema;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -10,16 +11,16 @@ import java.util.Date;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = MyTransition.TRANSITION_TABLE_NAME, schema = "USRPRF")
-public class MyTransition implements Serializable {
+@Table(name = TransitionEntity.TRANSITION_TABLE_NAME, schema = Schema.IF)
+public class TransitionEntity implements Serializable {
 
-    public static final String TRANSITION_TABLE_NAME = "MY_TRANSITION";
+    public static final String TRANSITION_TABLE_NAME = "TRANSITION";
     public static final String TRANSITION_SEQUENCE_NAME = TRANSITION_TABLE_NAME + "_SEQ";
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trn_sm_generator")
-    @SequenceGenerator(name = "trn_sm_generator", sequenceName = MyTransition.TRANSITION_SEQUENCE_NAME, schema = "USRPRF", allocationSize = 1, initialValue = 1)
+    @SequenceGenerator(name = "trn_sm_generator", sequenceName = TransitionEntity.TRANSITION_SEQUENCE_NAME, schema = Schema.IF, allocationSize = 1, initialValue = 1)
     private Long id;
 
     @Column(name = "EVENT_NAME", nullable = false)
@@ -27,15 +28,15 @@ public class MyTransition implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SOURCE_STATE", referencedColumnName = "ID")
-    private MyState sourceState;
+    private StateEntity sourceState;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DESTINATION_STATE", referencedColumnName = "ID")
-    private MyState destinationState;
+    private StateEntity destinationState;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATE_MACHINE_FACTORY", referencedColumnName = "ID")
-    private MyStateMachineFactory stateMachineFactory;
+    private StateMachineFactoryEntity stateMachineFactory;
 
     @Column(nullable = false, updatable = false, name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
@@ -47,17 +48,17 @@ public class MyTransition implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
-    public MyTransition() {
+    public TransitionEntity() {
     }
 
-    public MyTransition(String eventName, MyState sourceState, MyState destinationState, MyStateMachineFactory stateMachineFactory) {
+    public TransitionEntity(String eventName, StateEntity sourceState, StateEntity destinationState, StateMachineFactoryEntity stateMachineFactory) {
         this.eventName = eventName;
         this.sourceState = sourceState;
         this.destinationState = destinationState;
         this.stateMachineFactory = stateMachineFactory;
     }
 
-    public MyTransition(Long id, String eventName, MyState sourceState, MyState destinationState, MyStateMachineFactory stateMachineFactory) {
+    public TransitionEntity(Long id, String eventName, StateEntity sourceState, StateEntity destinationState, StateMachineFactoryEntity stateMachineFactory) {
         this.id = id;
         this.eventName = eventName;
         this.sourceState = sourceState;
@@ -81,27 +82,27 @@ public class MyTransition implements Serializable {
         this.eventName = eventName;
     }
 
-    public MyState getSourceState() {
+    public StateEntity getSourceState() {
         return sourceState;
     }
 
-    public void setSourceState(MyState sourceState) {
+    public void setSourceState(StateEntity sourceState) {
         this.sourceState = sourceState;
     }
 
-    public MyState getDestinationState() {
+    public StateEntity getDestinationState() {
         return destinationState;
     }
 
-    public void setDestinationState(MyState destinationState) {
+    public void setDestinationState(StateEntity destinationState) {
         this.destinationState = destinationState;
     }
 
-    public MyStateMachineFactory getStateMachineFactory() {
+    public StateMachineFactoryEntity getStateMachineFactory() {
         return stateMachineFactory;
     }
 
-    public void setStateMachineFactory(MyStateMachineFactory stateMachineFactory) {
+    public void setStateMachineFactory(StateMachineFactoryEntity stateMachineFactory) {
         this.stateMachineFactory = stateMachineFactory;
     }
 
@@ -123,7 +124,7 @@ public class MyTransition implements Serializable {
 
     @Override
     public String toString() {
-        return "MyTransition{" +
+        return "TransitionEntity{" +
                 "id=" + id +
                 ", eventName='" + eventName + '\'' +
                 ", sourceState=" + sourceState +
@@ -133,7 +134,7 @@ public class MyTransition implements Serializable {
                 '}';
     }
 
-    public boolean isPossible(MyState currentState, String event) {
+    public boolean isPossible(StateEntity currentState, String event) {
         if (this.sourceState.equals(currentState)) {
             if (this.eventName.equals(event)) {
                 return true;

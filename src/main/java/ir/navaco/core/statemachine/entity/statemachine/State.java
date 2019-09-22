@@ -1,7 +1,7 @@
 /*
 package ir.navaco.core.statemachine.entity.statemachine;
 
-public enum State {
+public enum StateEntity {
 
     BACKLOG("BACKLOG"),
     IN_PROGRESS("IN_PROGRESS"),
@@ -10,7 +10,7 @@ public enum State {
 
     private String stateName;
 
-    State(String stateName) {
+    StateEntity(String stateName) {
         this.stateName = stateName;
     }
 

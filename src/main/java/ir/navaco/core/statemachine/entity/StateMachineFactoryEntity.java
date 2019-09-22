@@ -1,6 +1,7 @@
 package ir.navaco.core.statemachine.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ir.navaco.core.statemachine.enums.Schema;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,18 +13,18 @@ import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = MyStateMachineFactory.STATE_MACHINE_FACTORY_TABLE_NAME, schema = "USRPRF", indexes = {
+@Table(name = StateMachineFactoryEntity.STATE_MACHINE_FACTORY_TABLE_NAME, schema = Schema.IF, indexes = {
         @Index(name = "factory_name_idx", columnList = "FACTORY_NAME")
 })
-public class MyStateMachineFactory implements Serializable {
+public class StateMachineFactoryEntity implements Serializable {
 
-    public static final String STATE_MACHINE_FACTORY_TABLE_NAME = "MY_STATE_MACHINE_FACTORY";
+    public static final String STATE_MACHINE_FACTORY_TABLE_NAME = "STATE_MACHINE_FACTORY";
     public static final String STATE_MACHINE_FACTORY_SEQUENCE_NAME = STATE_MACHINE_FACTORY_TABLE_NAME + "_SEQ";
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "smf_generator")
-    @SequenceGenerator(name = "smf_generator", sequenceName = MyStateMachineFactory.STATE_MACHINE_FACTORY_SEQUENCE_NAME, schema = "USRPRF", allocationSize = 1, initialValue = 1)
+    @SequenceGenerator(name = "smf_generator", sequenceName = StateMachineFactoryEntity.STATE_MACHINE_FACTORY_SEQUENCE_NAME, schema = Schema.IF, allocationSize = 1, initialValue = 1)
     private Long id;
 
     @Column(name = "FACTORY_NAME", nullable = false, unique = true)
@@ -37,15 +38,15 @@ public class MyStateMachineFactory implements Serializable {
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateMachineFactory")
-    private List<MyState> states;
+    private List<StateEntity> states;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateMachineFactory")
-    private List<MyTransition> transitions;
+    private List<TransitionEntity> transitions;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "stateMachineFactory")
-    private List<MyStateMachine> stateMachines;
+    private List<StateMachineEntity> stateMachines;
 
     @Column(nullable = false, updatable = false, name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
@@ -57,10 +58,10 @@ public class MyStateMachineFactory implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
-    public MyStateMachineFactory() {
+    public StateMachineFactoryEntity() {
     }
 
-    public MyStateMachineFactory(String factoryName, String description, Boolean active, List<MyState> states, List<MyTransition> transitions, List<MyStateMachine> stateMachines) {
+    public StateMachineFactoryEntity(String factoryName, String description, Boolean active, List<StateEntity> states, List<TransitionEntity> transitions, List<StateMachineEntity> stateMachines) {
         this.factoryName = factoryName;
         this.description = description;
         this.active = active;
@@ -69,7 +70,7 @@ public class MyStateMachineFactory implements Serializable {
         this.stateMachines = stateMachines;
     }
 
-    public MyStateMachineFactory(Long id, String factoryName, String description, Boolean active, List<MyState> states, List<MyTransition> transitions, List<MyStateMachine> stateMachines) {
+    public StateMachineFactoryEntity(Long id, String factoryName, String description, Boolean active, List<StateEntity> states, List<TransitionEntity> transitions, List<StateMachineEntity> stateMachines) {
         this.id = id;
         this.factoryName = factoryName;
         this.description = description;
@@ -111,27 +112,27 @@ public class MyStateMachineFactory implements Serializable {
         this.active = active;
     }
 
-    public List<MyState> getStates() {
+    public List<StateEntity> getStates() {
         return states;
     }
 
-    public void setStates(List<MyState> states) {
+    public void setStates(List<StateEntity> states) {
         this.states = states;
     }
 
-    public List<MyTransition> getTransitions() {
+    public List<TransitionEntity> getTransitions() {
         return transitions;
     }
 
-    public void setTransitions(List<MyTransition> transitions) {
+    public void setTransitions(List<TransitionEntity> transitions) {
         this.transitions = transitions;
     }
 
-    public List<MyStateMachine> getStateMachines() {
+    public List<StateMachineEntity> getStateMachines() {
         return stateMachines;
     }
 
-    public void setStateMachines(List<MyStateMachine> stateMachines) {
+    public void setStateMachines(List<StateMachineEntity> stateMachines) {
         this.stateMachines = stateMachines;
     }
 
@@ -151,8 +152,8 @@ public class MyStateMachineFactory implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public MyState getInitialState() {
-        for (MyState state : states) {
+    public StateEntity getInitialState() {
+        for (StateEntity state : states) {
             if (state.getInitial())
                 return state;
         }
@@ -160,7 +161,7 @@ public class MyStateMachineFactory implements Serializable {
     }
 
     public boolean hasEvent(String event) {
-        for (MyTransition transition : transitions) {
+        for (TransitionEntity transition : transitions) {
             if (transition.getEventName().equals(event)) {
                 return true;
             }
@@ -170,7 +171,7 @@ public class MyStateMachineFactory implements Serializable {
 
     @Override
     public String toString() {
-        return "MyStateMachineFactory{" +
+        return "StateMachineFactoryEntity{" +
                 "id=" + id +
                 ", factoryName='" + factoryName + '\'' +
                 ", description='" + description + '\'' +

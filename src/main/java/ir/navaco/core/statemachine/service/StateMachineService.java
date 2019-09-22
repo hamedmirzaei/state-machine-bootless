@@ -8,7 +8,7 @@ public interface StateMachineService {
 
     void initialize();
 
-    String createStateMachine(String stateMachineFactoryType)
+    String createStateMachine(String factoryName)
             throws StateMachineException.FactoryNotFoundException,
             StateMachineException.PersistException;
 

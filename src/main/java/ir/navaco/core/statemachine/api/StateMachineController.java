@@ -39,8 +39,8 @@ public class StateMachineController {
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createStateMachine(@RequestBody Map<String, String> input) {
         try {
-            validate(input, 1, "type");
-            String stateMachineUuid = stateMachineService.createStateMachine(input.get("type"));
+            validate(input, 1, "factoryName");
+            String stateMachineUuid = stateMachineService.createStateMachine(input.get("factoryName"));
             return ResponseEntity.ok(stateMachineUuid);
         } catch (StateMachineRequestValidationException.BadSizeMap | StateMachineRequestValidationException.FieldNotExist ex) {
             ex.printStackTrace();
@@ -51,6 +51,9 @@ public class StateMachineController {
         } catch (StateMachineException.PersistException ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -78,8 +81,8 @@ public class StateMachineController {
     @PostMapping(value = "/{smuuid}/events/trigger", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendEvent(@PathVariable("smuuid") String stateMachineUuid, @RequestBody Map<String, String> input) {
         try {
-            validate(input, 1,"event");
-            String message = stateMachineService.sendEvent(stateMachineUuid, input.get("event"));
+            validate(input, 1,"eventName");
+            String message = stateMachineService.sendEvent(stateMachineUuid, input.get("eventName"));
             return ResponseEntity.ok(message);
         } catch (StateMachineRequestValidationException.BadSizeMap | StateMachineRequestValidationException.FieldNotExist | StateMachineException.EventNotValidException ex) {
             ex.printStackTrace();

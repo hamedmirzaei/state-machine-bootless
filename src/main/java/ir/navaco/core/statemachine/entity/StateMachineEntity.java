@@ -1,5 +1,6 @@
 package ir.navaco.core.statemachine.entity;
 
+import ir.navaco.core.statemachine.enums.Schema;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -10,16 +11,16 @@ import java.util.Date;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = MyStateMachine.STATE_MACHINE_TABLE_NAME, schema = "USRPRF")
-public class MyStateMachine implements Serializable {
+@Table(name = StateMachineEntity.STATE_MACHINE_TABLE_NAME, schema = Schema.IF)
+public class StateMachineEntity implements Serializable {
 
-    public static final String STATE_MACHINE_TABLE_NAME = "MY_STATE_MACHINE";
+    public static final String STATE_MACHINE_TABLE_NAME = "STATE_MACHINE";
     public static final String STATE_MACHINE_SEQUENCE_NAME = STATE_MACHINE_TABLE_NAME + "_SEQ";
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sm_generator")
-    @SequenceGenerator(name = "sm_generator", sequenceName = MyStateMachine.STATE_MACHINE_SEQUENCE_NAME, schema = "USRPRF", allocationSize = 1, initialValue = 1)
+    @SequenceGenerator(name = "sm_generator", sequenceName = StateMachineEntity.STATE_MACHINE_SEQUENCE_NAME, schema = Schema.IF, allocationSize = 1, initialValue = 1)
     private Long id;
 
     @Column(name = "UUID", nullable = false, unique = true)
@@ -27,11 +28,11 @@ public class MyStateMachine implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATE_MACHINE_FACTORY", referencedColumnName = "ID")
-    private MyStateMachineFactory stateMachineFactory;
+    private StateMachineFactoryEntity stateMachineFactory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CURRENT_STATE", referencedColumnName = "ID")
-    private MyState currentState;
+    private StateEntity currentState;
 
     @Column(nullable = false, updatable = false, name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,16 +44,16 @@ public class MyStateMachine implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
-    public MyStateMachine() {
+    public StateMachineEntity() {
     }
 
-    public MyStateMachine(String uuid, MyStateMachineFactory stateMachineFactory, MyState currentState) {
+    public StateMachineEntity(String uuid, StateMachineFactoryEntity stateMachineFactory, StateEntity currentState) {
         this.uuid = uuid;
         this.stateMachineFactory = stateMachineFactory;
         this.currentState = currentState;
     }
 
-    public MyStateMachine(Long id, String uuid, MyStateMachineFactory stateMachineFactory, MyState currentState) {
+    public StateMachineEntity(Long id, String uuid, StateMachineFactoryEntity stateMachineFactory, StateEntity currentState) {
         this.id = id;
         this.uuid = uuid;
         this.stateMachineFactory = stateMachineFactory;
@@ -75,19 +76,19 @@ public class MyStateMachine implements Serializable {
         this.uuid = uuid;
     }
 
-    public MyStateMachineFactory getStateMachineFactory() {
+    public StateMachineFactoryEntity getStateMachineFactory() {
         return stateMachineFactory;
     }
 
-    public void setStateMachineFactory(MyStateMachineFactory stateMachineFactory) {
+    public void setStateMachineFactory(StateMachineFactoryEntity stateMachineFactory) {
         this.stateMachineFactory = stateMachineFactory;
     }
 
-    public MyState getCurrentState() {
+    public StateEntity getCurrentState() {
         return currentState;
     }
 
-    public void setCurrentState(MyState currentState) {
+    public void setCurrentState(StateEntity currentState) {
         this.currentState = currentState;
     }
 
@@ -109,10 +110,9 @@ public class MyStateMachine implements Serializable {
 
     @Override
     public String toString() {
-        return "MyStateMachine{" +
+        return "StateMachineEntity{" +
                 "id=" + id +
                 ", uuid='" + uuid + '\'' +
-                ", stateMachineFactory=" + stateMachineFactory +
                 ", currentState=" + currentState +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

@@ -1,7 +1,7 @@
 /*
 package ir.navaco.core.statemachine.entity.statemachine.resolver;
 
-import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.StateMachineEntity;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ public interface StateMachineResolver<S, E> {
      * @return Event collection
      *//*
 
-    List<E> getAvailableEvents(StateMachine<S, E> stateMachine);
+    List<E> getAvailableEvents(StateMachineEntity<S, E> stateMachine);
 }
 */
