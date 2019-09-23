@@ -7,7 +7,7 @@ public class StateMachineException {
         private String type;
 
         public FactoryNotFoundException(String type) {
-            super("There is no factory with type \"" + type + "\"");
+            super("There is no factory with name \"" + type + "\"");
             this.type = type;
         }
 

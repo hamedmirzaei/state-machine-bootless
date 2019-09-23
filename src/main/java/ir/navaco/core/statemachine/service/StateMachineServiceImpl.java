@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -80,6 +81,7 @@ public class StateMachineServiceImpl implements StateMachineService {
         for (TransitionEntity transition : stateMachine.getStateMachineFactory().getTransitions()) {
             events.add(transition.getEventName());
         }
+        Collections.sort(events);
         return events;
     }
 
@@ -94,6 +96,7 @@ public class StateMachineServiceImpl implements StateMachineService {
             if (!states.contains(state.getStateName()))
                 states.add(state.getStateName());
         }
+        Collections.sort(states);
         return states;
     }
 
@@ -133,19 +136,27 @@ public class StateMachineServiceImpl implements StateMachineService {
         factory.setActive(true);
         factory.setDescription("factory type 1");
         stateMachineFactoryRepository.save(factory);
+
         StateEntity s1 = new StateEntity("S1", true, false, factory);
         stateRepository.save(s1);
         StateEntity s2 = new StateEntity("S2", false, false, factory);
         stateRepository.save(s2);
         StateEntity s3 = new StateEntity("S3", false, true, factory);
         stateRepository.save(s3);
-        //factory.setStates(Arrays.asList(s1, s2, s3));
 
         TransitionEntity e1 = new TransitionEntity("E1", s1, s2, factory);
         transitionRepository.save(e1);
         TransitionEntity e2 = new TransitionEntity("E2", s2, s3, factory);
         transitionRepository.save(e2);
-        //factory.setTransitions(Arrays.asList(e1, e2));
+    }
+
+    @Override
+    public void deinitialize() {
+        stateMachineRepository.deleteAll();
+        transitionRepository.deleteAll();
+        stateRepository.deleteAll();
+        stateMachineFactoryRepository.deleteAll();
+
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 public interface StateMachineService {
 
     void initialize();
+    void deinitialize();
 
     String createStateMachine(String factoryName)
             throws StateMachineException.FactoryNotFoundException,
